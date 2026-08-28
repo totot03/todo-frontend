@@ -1,0 +1,26 @@
+{
+  // Tailwind v4 의 @theme, @apply 등을 VS Code CSS 린터가 모르는 문법으로 오인하는 것을 방지
+  "css.lint.unknownAtRules": "ignore",
+
+  // 저장 시 Prettier 로 포맷 — 커밋 훅과 같은 규칙이 편집 중에도 적용된다
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[typescriptreact]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[json]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[css]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+
+  // 저장 시 ESLint 자동 수정 (import 정렬, 불필요한 코드 제거 등)
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "eslint.useFlatConfig": true,
+
+  // 워크스페이스에 설치된 TypeScript 버전을 사용 (전역 버전과 불일치 방지)
+  "typescript.tsdk": "node_modules/typescript/lib",
+
+  // 줄바꿈은 LF 고정 — .gitattributes / Prettier endOfLine 과 일치
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true
+}
