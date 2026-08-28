@@ -1,0 +1,18 @@
+# 빌드 산출물 및 의존성
+node_modules
+.next
+out
+build
+coverage
+
+# 자동 생성 파일
+next-env.d.ts
+package-lock.json
+*.tsbuildinfo
+
+# husky 내부 디렉터리
+.husky/_
+
+# 정적 자산
+public
+*.min.*

@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+# ─────────────────────────────────────────────
+# pre-push (todo-frontend) — "원격 공유 직전" 방어선
+#   타입 오류는 파일 단위로 판정할 수 없다(다른 파일 변경으로 깨질 수 있음).
+#   그래서 프로젝트 전체 타입 체크 + 린트는 push 시점에 한 번만 돌린다.
+#   급하면 git push --no-verify 로 우회 가능(단, CI 에서 동일 검사가 다시 돈다).
+# ─────────────────────────────────────────────
+echo "▶ 타입 체크 (tsc --noEmit)"
+npm run typecheck || exit 1
+
+echo "▶ 린트 (eslint --max-warnings=0)"
+npm run lint:strict || exit 1
+
+echo "✅ push 전 검사 통과"
