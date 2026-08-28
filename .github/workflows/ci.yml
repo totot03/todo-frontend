@@ -1,0 +1,46 @@
+# ─────────────────────────────────────────────
+# 프론트엔드 CI — 훅의 "최종 방어선"
+#
+# Git 훅은 --no-verify 로 우회할 수 있고, 훅 설치를 잊은 사람도 있을 수 있다.
+# 따라서 같은 검사를 CI 에서 한 번 더 돌려 우회 경로를 막는다.
+# ─────────────────────────────────────────────
+name: frontend-ci
+
+on:
+  push:
+    branches: [main, master, "feature/**", "fix/**", "dev/**", "hotfix/**"]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # package-lock.json 기준의 재현 가능한 설치 (npm install 이 아니라 ci)
+      - run: npm ci
+
+      - name: 타입 체크
+        run: npm run typecheck
+
+      - name: 린트 (경고도 실패 처리)
+        run: npm run lint:strict
+
+      - name: 포맷 검사
+        run: npm run format:check
+
+      - name: 시크릿 스캔
+        run: npm run secretlint
+
+      - name: 프로덕션 빌드
+        run: npm run build
+
+      # 알려진 취약점이 있는 의존성 차단 (high 이상)
+      - name: 의존성 취약점 점검
+        run: npm audit --audit-level=high
+        continue-on-error: true
