@@ -14,6 +14,7 @@ import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { Pagination } from "@/components/common/Pagination";
 import { TodoList } from "./TodoList";
 import { TodoSearchInput } from "./TodoSearchInput";
+import { TodoSortToggle, type SortFilterValue } from "./TodoSortToggle";
 import { TodoStatusFilter, type StatusFilterValue } from "./TodoStatusFilter";
 
 const PAGE_SIZE = 10;
@@ -30,8 +31,12 @@ function fromStatusFilterValue(value: StatusFilterValue): string | undefined {
   return undefined;
 }
 
+function toSortFilterValue(sortRaw: string | null): SortFilterValue {
+  return sortRaw === "oldest" ? "oldest" : "latest";
+}
+
 /**
- * /todos 오케스트레이션. URL searchParams(page/completed/keyword)를 단일 진실 소스로 삼아
+ * /todos 오케스트레이션. URL searchParams(page/completed/keyword/sort)를 단일 진실 소스로 삼아
  * 새로고침·뒤로가기·공유 링크가 자연스럽게 동작하고, React Query의 queryKey가 URL과
  * 1:1 대응해 캐시 일관성을 얻는다.
  */
@@ -42,12 +47,15 @@ export function TodoListContainer() {
   const page = Number(searchParams.get("page") ?? "1"); // URL은 1-based
   const completedRaw = searchParams.get("completed");
   const keyword = searchParams.get("keyword") ?? "";
+  const sortValue = toSortFilterValue(searchParams.get("sort"));
 
   const queryParams = {
     page: page - 1, // API는 0-based — Pagination 컴포넌트 호출부와 동일한 변환 경계
     size: PAGE_SIZE,
     completed: completedRaw === null ? undefined : completedRaw === "true",
     keyword: keyword || undefined,
+    // 기본값(최신순)은 생략해 이 기능 도입 전과 동일한 요청/캐시 키를 유지한다.
+    sort: sortValue === "oldest" ? ("createdAt,asc" as const) : undefined,
   };
 
   const { data, isPending, isError, error, refetch } = useQuery({
@@ -82,6 +90,10 @@ export function TodoListContainer() {
         <TodoStatusFilter
           value={toStatusFilterValue(completedRaw)}
           onChange={(value) => patchParams({ completed: fromStatusFilterValue(value) })}
+        />
+        <TodoSortToggle
+          value={sortValue}
+          onChange={(value) => patchParams({ sort: value === "oldest" ? "oldest" : undefined })}
         />
         <TodoSearchInput
           value={keyword}

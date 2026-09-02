@@ -6,11 +6,12 @@ export interface TodoListParams {
   size?: number;
   completed?: boolean;
   keyword?: string;
+  // 정렬 필드는 createdAt으로 고정, 방향만 선택 가능 (API_SPEC.md 3.1, FR-T06).
+  // 기본값(createdAt,desc)일 땐 생략해 캐시 키/URL을 기존과 동일하게 유지한다.
+  sort?: "createdAt,desc" | "createdAt,asc";
   // 쿼리 파라미터로 직렬화되는 타입이라 인덱스 시그니처를 명시한다 —
   // 없으면 apiFetch의 searchParams(Record<string, ...>)에 구조적으로 할당되지 않는다.
   [key: string]: string | number | boolean | undefined;
-  // sort는 의도적으로 없음 — API_SPEC.md 3.1: 확장 대비용 파라미터이며
-  // 프론트엔드는 사용하지 않는다(정렬은 createdAt,desc 고정).
 }
 
 export interface CreateTodoRequest {
