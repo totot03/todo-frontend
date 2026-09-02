@@ -1,12 +1,12 @@
 "use client";
 
 import { Moon, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
 
 import { Button } from "@/components/ui/button";
+import { useTheme } from "@/providers/ThemeProvider";
 
 /**
- * 라이트/다크 테마 전환 버튼 (FR-U01). next-themes의 useTheme으로
+ * 라이트/다크 테마 전환 버튼 (FR-U01). ThemeProvider의 useTheme으로
  * <html> 클래스를 토글하면 globals.css의 CSS 변수 토큰이 즉시 반영된다.
  *
  * 두 아이콘을 항상 렌더링해두고 Tailwind의 dark: variant로만 노출을 전환한다.
