@@ -2,7 +2,9 @@ import type { ApiResponse, FieldError } from "@/types/api";
 
 // 미설정 시 API_SPEC.md가 명시한 로컬 기본값으로 폴백 — CI는 .env를 만들지 않고
 // 바로 빌드하므로, 환경 변수가 없어도 빌드가 깨지면 안 된다.
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080";
+// export하는 이유: 구글 로그인 버튼이 window.location.href로 직접 이동할 때도
+// 동일한 백엔드 주소를 써야 하므로(BASE_URL 이중 정의 방지, M5).
+export const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080";
 
 /**
  * 백엔드 에러 코드/메시지/상태코드를 그대로 실어 나르는 에러.
@@ -25,6 +27,10 @@ interface ApiFetchOptions {
   method?: "GET" | "POST" | "PATCH" | "DELETE";
   body?: unknown;
   searchParams?: Record<string, string | number | boolean | undefined>;
+  // Server Component 전용. Node 런타임의 fetch는 브라우저 쿠키 저장소가 없어
+  // credentials:"include"가 아무 효과가 없으므로, 들어온 요청의 Cookie 헤더를
+  // 수동으로 실어 보낼 때만 쓴다(lib/api/server.ts). 브라우저에서는 쓰지 않는다.
+  headers?: Record<string, string>;
 }
 
 function buildUrl(path: string, searchParams?: ApiFetchOptions["searchParams"]): string {
@@ -48,13 +54,13 @@ function buildUrl(path: string, searchParams?: ApiFetchOptions["searchParams"]):
  * 세션 중간 만료 UX는 실제 화면이 생기는 M5에서 처리한다.
  */
 export async function apiFetch<T>(path: string, options: ApiFetchOptions = {}): Promise<T> {
-  const { method = "GET", body, searchParams } = options;
+  const { method = "GET", body, searchParams, headers } = options;
 
   let res: Response;
   try {
     res = await fetch(buildUrl(path, searchParams), {
       method,
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...headers },
       credentials: "include", // 인증은 이 한 줄이 전부 — 토큰을 저장·조회·첨부하지 않는다
       body: body !== undefined ? JSON.stringify(body) : undefined,
     });

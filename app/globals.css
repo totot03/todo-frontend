@@ -128,3 +128,35 @@
     @apply font-sans;
   }
 }
+
+/* Tiptap 편집기·읽기 전용 뷰어가 공유하는 최소 스타일(TiptapEditor/TiptapViewer, M5).
+   @tailwindcss/typography 없이 시맨틱 토큰만으로 구성해 라이트·다크 모두 자동 대응한다. */
+@layer components {
+  .tiptap-content :first-child {
+    margin-top: 0;
+  }
+  .tiptap-content h1 {
+    @apply text-2xl font-bold;
+  }
+  .tiptap-content h2 {
+    @apply text-xl font-bold;
+  }
+  .tiptap-content h3 {
+    @apply text-lg font-semibold;
+  }
+  .tiptap-content p {
+    @apply leading-relaxed;
+  }
+  .tiptap-content ul {
+    @apply list-disc pl-6;
+  }
+  .tiptap-content ol {
+    @apply list-decimal pl-6;
+  }
+  .tiptap-content blockquote {
+    @apply border-l-2 border-border pl-4 text-muted-foreground italic;
+  }
+  .tiptap-content strong {
+    @apply font-semibold;
+  }
+}
