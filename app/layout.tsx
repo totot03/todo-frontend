@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { ThemeProvider } from "@/providers/ThemeProvider";
+import { Header } from "@/components/layout/Header";
+import { AuthMenu } from "@/components/layout/AuthMenu";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -31,7 +33,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="flex min-h-full flex-col">
         <ThemeProvider>
-          <QueryProvider>{children}</QueryProvider>
+          <QueryProvider>
+            <Header>
+              <AuthMenu />
+            </Header>
+            <main className="flex flex-1 flex-col">{children}</main>
+          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>
