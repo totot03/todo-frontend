@@ -44,13 +44,16 @@ export function AuthMenu() {
   }
 
   return (
-    <Button
-      variant="outline"
-      size="sm"
-      onClick={() => logoutMutation.mutate()}
-      disabled={logoutMutation.isPending}
-    >
-      로그아웃
-    </Button>
+    <>
+      <span className="hidden text-sm text-muted-foreground md:inline">{user.nickname}</span>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => logoutMutation.mutate()}
+        disabled={logoutMutation.isPending}
+      >
+        로그아웃
+      </Button>
+    </>
   );
 }
